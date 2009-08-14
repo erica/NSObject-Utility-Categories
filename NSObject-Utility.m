@@ -7,6 +7,8 @@
 #import "NSObject-Utility.h"
 
 @implementation NSObject (UtilityExtension)
+
+// Return an array of an object's superclasses
 - (NSArray *) superclasses
 {
 	Class cl = [self class];
@@ -22,6 +24,8 @@
 	return results;
 }
 
+// Return a C-string with a selector's return type
+// may extend this idea to return a class
 - (const char *) returnTypeForSelector:(SEL)selector
 {
 	NSMethodSignature *ms = [self methodSignatureForSelector:selector];
@@ -178,14 +182,15 @@
 	return YES;	
 }
 
+// private. only sent to an invocation
 - (void) delayedInvocationWithReturnValue: (id) result
 {
-	// private. only sent to an invocation
 	NSInvocation *inv = (NSInvocation *) self;
 	[inv invoke];
 	if (result) [inv getReturnValue:&result];
 }
 
+// Delayed selector
 - (void) performSelector: (SEL) selector withDelay: (NSTimeInterval) ti withReturnValueAndArguments: (void *) result, ...
 {
 	va_list arglist;
@@ -197,6 +202,7 @@
 	[inv performSelector:@selector(delayedInvocationWithReturnValue:) withObject:(id) result afterDelay: ti];
 }
 
+// Returning objects by performing selectors
 - (id) objectByPerformingSelectorWithArguments: (SEL) selector, ...
 {
 	id result;
@@ -223,6 +229,8 @@
 	return [self objectByPerformingSelectorWithArguments:selector];
 }
 
+
+// Returning NSValues by performing selectors
 - (id) valueByPerformingSelectorWithArguments: (SEL) selector, ...
 {
 	va_list arglist;
@@ -256,6 +264,7 @@
 	return [self valueByPerformingSelectorWithArguments:selector];
 }
 
+// Delayed selectors
 - (void) performSelector: (SEL) selector withCPointer: (void *) cPointer afterDelay: (NSTimeInterval) delay
 {
 	NSMethodSignature *ms = [self methodSignatureForSelector:selector];

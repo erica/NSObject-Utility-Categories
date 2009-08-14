@@ -14,7 +14,6 @@
 @end
 
 @implementation TestBedController
-/*
 - (void) showBool: (BOOL) someBOOL
 {
 	printf("The BOOL was %d\n", someBOOL);
@@ -43,24 +42,37 @@
 - (void) performAction
 {
 	NSString *string = @"Hello World";
-	NSLog(@"%@", [string objectByPerformingSelector:@selector(length)]);
 	
 	printf("Classes:\n");
 	CFShow([string superclasses]);
 	CFShow([[NSMutableArray array] superclasses]);
+	
 
+	printf("Selectors");
+	
+	// choose a selector
+	UIImagePickerController *ipc = [[UIImagePickerController alloc] init];
+	SEL selector = [ipc chooseSelector:@selector(setAllowsEditing:), @selector(setAllowsImageEditing:)];
+	printf("Chosen selector: %s\n", [NSStringFromSelector(selector) UTF8String]);
+
+	// Execute that selector
+	[ipc performSelector:selector withReturnValueAndArguments:nil, YES];
+	
+	BOOL result;
+	selector = [ipc chooseSelector:@selector(allowsEditing), @selector(allowsImageEditing)];
+	[ipc performSelector:selector withReturnValueAndArguments:&result];
+	printf("Return value and selector: %d, %s\n", result, [NSStringFromSelector(selector) UTF8String]);
+	
+	[ipc release];
+	
+	printf("Performing selectors\n");
 	CGPoint aPoint = CGPointMake(1.0f, 3.0f);
 	[self performSelector:@selector(showCGPoint:) withCPointer:&aPoint afterDelay:1.0f];
 	
-} */
-
-// Testing out selector extensions
-- (void) performAction
-{
 	CGRect aFrame;
 	[self.view performSelector:@selector(frame) withReturnValueAndArguments:&aFrame, nil];
 	CFShow(NSStringFromCGRect(aFrame));
-	
+
 	[self.view performSelector:@selector(setFrame:) withReturnValueAndArguments:nil, CGRectMake(0.0f, 0.0f, 160.0f, 100.0f)];
 	[self.view performSelector:@selector(setCenter:) withReturnValueAndArguments:nil, CGPointMake(160.0f, 200.0f)];
 	
@@ -68,26 +80,22 @@
 	[NSNumber performSelector:@selector(numberWithInt:) withReturnValueAndArguments:&foo, 23];
 	CFShow(foo);
 	
-	NSString *outstring;
-	if ([@"foobar" performSelector:@selector(stringByAppendingString:) withReturnValueAndArguments:&outstring, @"blort"])
-		CFShow(outstring);
+	NSMutableString *s1 = [NSMutableString string];
+	[s1 performSelector:@selector(appendString:) withReturnValueAndArguments:nil, @"hello"];
+	CFShow(s1);
 	
 	UIBarButtonItem *bbi = [UIBarButtonItem alloc];
 	[bbi performSelector:@selector(initWithTitle:style:target:action:) withReturnValueAndArguments:&bbi, @"Hello!", 
 		UIBarButtonItemStylePlain, self, @selector(performAction)];
 	self.navigationItem.rightBarButtonItem = bbi;
 	
-	UIImagePickerController *ipc = [[UIImagePickerController alloc] init];
-	SEL selector = [ipc chooseSelector:@selector(setAllowsEditing:), @selector(setAllowsImageEditing:)];
-	[ipc performSelector:selector withReturnValueAndArguments:nil, YES];
-	printf("First test: (%s)\n", [NSStringFromSelector(selector) UTF8String]);
+	NSString *outstring = [@"foobar" objectByPerformingSelectorWithArguments:@selector(stringByAppendingString:), @"blort"];
+	CFShow(outstring);
 	
-	selector = [ipc chooseSelector:@selector(allowsEditing), @selector(allowsImageEditing)];
-	BOOL result;
-	[ipc performSelector:selector withReturnValueAndArguments:&result];
-	printf("Second test: %d (%s)\n", result, [NSStringFromSelector(selector) UTF8String]);
-
-	[ipc release];
+	if ([@"foobar" performSelector:@selector(stringByAppendingString:) withReturnValueAndArguments:&outstring, @"blort"])
+		CFShow(outstring);
+	
+	NSLog(@"%@", [string valueByPerformingSelector:@selector(length)]);
 }
 
 - (void) loadView

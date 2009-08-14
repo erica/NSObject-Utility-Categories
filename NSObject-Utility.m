@@ -51,7 +51,7 @@
 }
 
 // Return an invocation based on a selector and variadic arguments
-- (NSInvocation *) invocationWithSelectorAndArguments: (SEL) selector,...
+- (NSInvocation *) invocationWithSelector: (SEL) selector andArguments:(va_list) arguments
 {
 	if (![self respondsToSelector:selector]) return NULL;
 	
@@ -66,71 +66,68 @@
 	
 	int argcount = 2;
 	
-	va_list arguments;
-	va_start(arguments, selector);
-	
 	while (argcount < [ms numberOfArguments])
 	{
-		char *argType = (char *)[ms getArgumentTypeAtIndex:argcount];
-		if (strcmp(argType, @encode(id)) == 0)
+		char *argtype = (char *)[ms getArgumentTypeAtIndex:argcount];
+		if (strcmp(argtype, @encode(id)) == 0)
 		{
 			id argument = va_arg(arguments, id);
 			[inv setArgument:&argument atIndex:argcount++];
 		}
 		else if (
-				 (strcmp(argType, @encode(char)) == 0) ||
-				 (strcmp(argType, @encode(unsigned char)) == 0) ||
-				 (strcmp(argType, @encode(short)) == 0) ||
-				 (strcmp(argType, @encode(unsigned short)) == 0) |
-				 (strcmp(argType, @encode(int)) == 0) ||
-				 (strcmp(argType, @encode(unsigned int)) == 0)
+				 (strcmp(argtype, @encode(char)) == 0) ||
+				 (strcmp(argtype, @encode(unsigned char)) == 0) ||
+				 (strcmp(argtype, @encode(short)) == 0) ||
+				 (strcmp(argtype, @encode(unsigned short)) == 0) |
+				 (strcmp(argtype, @encode(int)) == 0) ||
+				 (strcmp(argtype, @encode(unsigned int)) == 0)
 				 )
 		{
 			int i = va_arg(arguments, int);
 			[inv setArgument:&i atIndex:argcount++];
 		}
 		else if (
-				 (strcmp(argType, @encode(long)) == 0) ||
-				 (strcmp(argType, @encode(unsigned long)) == 0)
+				 (strcmp(argtype, @encode(long)) == 0) ||
+				 (strcmp(argtype, @encode(unsigned long)) == 0)
 				 )
 		{
 			long l = va_arg(arguments, long);
 			[inv setArgument:&l atIndex:argcount++];
 		}
 		else if (
-				 (strcmp(argType, @encode(long long)) == 0) ||
-				 (strcmp(argType, @encode(unsigned long long)) == 0)
+				 (strcmp(argtype, @encode(long long)) == 0) ||
+				 (strcmp(argtype, @encode(unsigned long long)) == 0)
 				 )
 		{
 			long long l = va_arg(arguments, long long);
 			[inv setArgument:&l atIndex:argcount++];
 		}
 		else if (
-				 (strcmp(argType, @encode(float)) == 0) ||
-				 (strcmp(argType, @encode(double)) == 0)
+				 (strcmp(argtype, @encode(float)) == 0) ||
+				 (strcmp(argtype, @encode(double)) == 0)
 				 )
 		{
 			double d = va_arg(arguments, double);
 			[inv setArgument:&d atIndex:argcount++];
 		}
-		else if (strcmp(argType, @encode(Class)) == 0)
+		else if (strcmp(argtype, @encode(Class)) == 0)
 		{
 			Class c = va_arg(arguments, Class);
 			[inv setArgument:&c atIndex:argcount++];
 		}
-		else if (strcmp(argType, @encode(SEL)) == 0)
+		else if (strcmp(argtype, @encode(SEL)) == 0)
 		{
 			SEL s = va_arg(arguments, SEL);
 			[inv setArgument:&s atIndex:argcount++];
 		}
-		else if (strcmp(argType, @encode(char *)) == 0)
+		else if (strcmp(argtype, @encode(char *)) == 0)
 		{
 			char *s = va_arg(arguments, char *);
 			[inv setArgument:s atIndex:argcount++];
 		}		
 		else
 		{
-			NSString *type = [NSString stringWithCString:argType];
+			NSString *type = [NSString stringWithCString:argtype];
 			if ([type isEqualToString:@"{CGRect={CGPoint=ff}{CGSize=ff}}"])
 			{
 				CGRect arect = va_arg(arguments, CGRect);
@@ -155,15 +152,34 @@
 			}
 		}
 	}
-	va_end(arguments);
 	
 	if (argcount != [ms numberOfArguments]) 
 	{
-		printf("Argument count mismatch: %d expected, %d sent\n", [ms numberOfArguments], argcount);
+		printf("Invocation argument count mismatch: %d expected, %d sent\n", [ms numberOfArguments], argcount);
 		return NULL;
-	}	
+	}
 	
 	return inv;
+}
+
+// Return an invocation with the given arguments
+- (NSInvocation *) invocationWithSelectorAndArguments: (SEL) selector, ...
+{
+	va_list arglist;
+	va_start(arglist, selector);
+	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
+	va_end(arglist);
+	return inv;	
+}
+
+// Peform the selector using va_list arguments
+- (BOOL) performSelector: (SEL) selector withReturnValue: (void *) result andArguments: (va_list) arglist
+{
+	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
+	if (!inv) return NO;
+	[inv invoke];
+	if (result) [inv getReturnValue:result];
+	return YES;	
 }
 
 // Perform a selector with an arbitrary number of arguments
@@ -172,14 +188,12 @@
 {
 	va_list arglist;
 	va_start(arglist, result);
-	NSInvocation *inv = [self invocationWithSelectorAndArguments:selector, arglist];
-	va_end(arglist);
-	
+	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
 	if (!inv) return NO;
-
 	[inv invoke];
-	if (result) [inv getReturnValue:result];	
-	return YES;	
+	if (result) [inv getReturnValue:result];
+	va_end(arglist);
+	return YES;		
 }
 
 // private. only sent to an invocation
@@ -195,7 +209,7 @@
 {
 	va_list arglist;
 	va_start(arglist, result);
-	NSInvocation *inv = [self invocationWithSelectorAndArguments:selector, arglist];
+	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
 	va_end(arglist);
 	
 	if (!inv) return;
@@ -208,9 +222,11 @@
 	id result;
 	va_list arglist;
 	va_start(arglist, selector);
-	[self performSelector:selector withReturnValueAndArguments:&result, arglist];
+	[self performSelector:selector withReturnValue:&result andArguments:arglist];
 	va_end(arglist);
 	
+	printf("here:\n");
+	CFShow(result);
 	return result;
 }
 
@@ -235,7 +251,7 @@
 {
 	va_list arglist;
 	va_start(arglist, selector);
-	NSInvocation *inv = [self invocationWithSelectorAndArguments:selector, arglist];
+	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
 	va_end(arglist);
 	
 	if (!inv) return nil;

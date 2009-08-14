@@ -15,7 +15,6 @@
 
 - (NSInvocation *) invocationWithSelectorAndArguments: (SEL) selector,...;
 - (BOOL) performSelector: (SEL) selector withReturnValueAndArguments: (void *) result, ...;
-- (void) performSelector: (SEL) selector withDelay: (NSTimeInterval) ti withReturnValueAndArguments: (void *) result, ...;
 
 - (id) objectByPerformingSelectorWithArguments: (SEL) selector, ...;
 - (id) objectByPerformingSelector:(SEL)selector withObject:(id) object1 withObject: (id) object2;
@@ -27,4 +26,5 @@
 - (void) performSelector: (SEL) selector withFloat: (float) floatValue afterDelay: (NSTimeInterval) delay;
 - (void) performSelector: (SEL) selector withBool: (BOOL) boolValue afterDelay: (NSTimeInterval) delay;
 - (void) performSelector: (SEL) selector afterDelay: (NSTimeInterval) ti;
+- (void) performSelector: (SEL) selector withDelayAndArguments: (NSTimeInterval) ti,...;
 @end

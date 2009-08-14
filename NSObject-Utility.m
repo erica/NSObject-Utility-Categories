@@ -65,10 +65,12 @@
 	[inv setSelector:selector];
 	
 	int argcount = 2;
+	int totalArgs = [ms numberOfArguments];
 	
-	while (argcount < [ms numberOfArguments])
+	while (argcount < totalArgs)
 	{
 		char *argtype = (char *)[ms getArgumentTypeAtIndex:argcount];
+		printf("[%s] %d of %d\n", [NSStringFromSelector(selector) UTF8String], argcount, totalArgs);
 		if (strcmp(argtype, @encode(id)) == 0)
 		{
 			id argument = va_arg(arguments, id);
@@ -153,7 +155,7 @@
 		}
 	}
 	
-	if (argcount != [ms numberOfArguments]) 
+	if (argcount != totalArgs) 
 	{
 		printf("Invocation argument count mismatch: %d expected, %d sent\n", [ms numberOfArguments], argcount);
 		return NULL;
@@ -194,26 +196,6 @@
 	if (result) [inv getReturnValue:result];
 	va_end(arglist);
 	return YES;		
-}
-
-// private. only sent to an invocation
-- (void) delayedInvocationWithReturnValue: (id) result
-{
-	NSInvocation *inv = (NSInvocation *) self;
-	[inv invoke];
-	if (result) [inv getReturnValue:&result];
-}
-
-// Delayed selector
-- (void) performSelector: (SEL) selector withDelay: (NSTimeInterval) ti withReturnValueAndArguments: (void *) result, ...
-{
-	va_list arglist;
-	va_start(arglist, result);
-	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
-	va_end(arglist);
-	
-	if (!inv) return;
-	[inv performSelector:@selector(delayedInvocationWithReturnValue:) withObject:(id) result afterDelay: ti];
 }
 
 // Returning objects by performing selectors
@@ -274,6 +256,26 @@
 - (void) performSelector: (SEL) selector afterDelay: (NSTimeInterval) ti
 {
 	[self performSelector:selector withObject:nil afterDelay: ti];
+}
+
+// private. only sent to an invocation
+- (void) getReturnValue: (void *) result
+{
+	NSInvocation *inv = (NSInvocation *) self;
+	[inv invoke];
+	if (result) [inv getReturnValue:result];
+}
+
+// Delayed selector
+- (void) performSelector: (SEL) selector withDelayAndArguments: (NSTimeInterval) ti,...
+{
+	va_list arglist;
+	va_start(arglist, ti);
+	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
+	va_end(arglist);
+	
+	if (!inv) return;
+	[inv performSelector:@selector(invoke) afterDelay:ti];
 }
 @end
 

@@ -94,6 +94,9 @@
 	NSString *outstring;
 	if ([@"foobar" performSelector:@selector(stringByAppendingString:) withReturnValueAndArguments:&outstring, @"blort"])
 		CFShow(outstring);
+	
+	// showcase other delay
+	[self.view performSelector:@selector(setBackgroundColor:) withDelayAndArguments:2.0f, [UIColor blueColor]];
 }
 
 - (void) loadView

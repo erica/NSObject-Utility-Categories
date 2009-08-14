@@ -7,12 +7,6 @@
 #import "NSObject-Utility.h"
 
 @implementation NSObject (UtilityExtension)
-- (const char *) returnTypeForSelector:(SEL)selector
-{
-	NSMethodSignature *ms = [self methodSignatureForSelector:selector];
-	return [ms methodReturnType];
-}
-
 - (NSArray *) superclasses
 {
 	Class cl = [self class];
@@ -24,21 +18,44 @@
 		[results addObject:cl];
 	}
 	while (![cl isEqual:[NSObject class]]) ;
-
+	
 	return results;
 }
 
-
-// Thanks to Kevin Ballard for assist!
-- (BOOL) performSelector: (SEL) selector withReturnValueAndArguments: (void *) result, ...
+- (const char *) returnTypeForSelector:(SEL)selector
 {
-	if (![self respondsToSelector:selector]) return NO;
+	NSMethodSignature *ms = [self methodSignatureForSelector:selector];
+	return [ms methodReturnType];
+}
+
+// Choose the first selector that an object can respond to
+// Thank Kevin Ballard for assist!
+- (SEL) chooseSelector: (SEL) aSelector, ...
+{
+	if ([self respondsToSelector:aSelector]) return aSelector;
+	
+	va_list selectors;
+	va_start(selectors, aSelector);
+	SEL selector = va_arg(selectors, SEL);
+	while (selector)
+	{
+		if ([self respondsToSelector:selector]) return selector;
+		selector = va_arg(selectors, SEL);
+	}
+	
+	return NULL;
+}
+
+// Return an invocation based on a selector and variadic arguments
+- (NSInvocation *) invocationWithSelectorAndArguments: (SEL) selector,...
+{
+	if (![self respondsToSelector:selector]) return NULL;
 	
 	NSMethodSignature *ms = [self methodSignatureForSelector:selector];
-	if (!ms) return NO;
+	if (!ms) return NULL;
 	
 	NSInvocation *inv = [NSInvocation invocationWithMethodSignature:ms];
-	if (!inv) return NO;
+	if (!inv) return NULL;
 	
 	[inv setTarget:self];
 	[inv setSelector:selector];
@@ -46,8 +63,8 @@
 	int argcount = 2;
 	
 	va_list arguments;
-	va_start(arguments, result);
-
+	va_start(arguments, selector);
+	
 	while (argcount < [ms numberOfArguments])
 	{
 		char *argType = (char *)[ms getArgumentTypeAtIndex:argcount];
@@ -63,7 +80,7 @@
 				 (strcmp(argType, @encode(unsigned short)) == 0) |
 				 (strcmp(argType, @encode(int)) == 0) ||
 				 (strcmp(argType, @encode(unsigned int)) == 0)
-			)
+				 )
 		{
 			int i = va_arg(arguments, int);
 			[inv setArgument:&i atIndex:argcount++];
@@ -71,7 +88,7 @@
 		else if (
 				 (strcmp(argType, @encode(long)) == 0) ||
 				 (strcmp(argType, @encode(unsigned long)) == 0)
-			)
+				 )
 		{
 			long l = va_arg(arguments, long);
 			[inv setArgument:&l atIndex:argcount++];
@@ -79,7 +96,7 @@
 		else if (
 				 (strcmp(argType, @encode(long long)) == 0) ||
 				 (strcmp(argType, @encode(unsigned long long)) == 0)
-			)
+				 )
 		{
 			long long l = va_arg(arguments, long long);
 			[inv setArgument:&l atIndex:argcount++];
@@ -135,32 +152,139 @@
 		}
 	}
 	va_end(arguments);
-
+	
 	if (argcount != [ms numberOfArguments]) 
 	{
 		printf("Argument count mismatch: %d expected, %d sent\n", [ms numberOfArguments], argcount);
-		return NO;
-	}
+		return NULL;
+	}	
 	
+	return inv;
+}
+
+// Perform a selector with an arbitrary number of arguments
+// Thanks to Kevin Ballard for assist!
+- (BOOL) performSelector: (SEL) selector withReturnValueAndArguments: (void *) result, ...
+{
+	va_list arglist;
+	va_start(arglist, result);
+	NSInvocation *inv = [self invocationWithSelectorAndArguments:selector, arglist];
+	va_end(arglist);
+	
+	if (!inv) return NO;
+
 	[inv invoke];
 	if (result) [inv getReturnValue:result];	
 	return YES;	
 }
 
-// Thank Kevin Ballard for assist!
-- (SEL) chooseSelector: (SEL) aSelector, ...
+- (void) delayedInvocationWithReturnValue: (id) result
 {
-	if ([self respondsToSelector:aSelector]) return aSelector;
+	// private. only sent to an invocation
+	NSInvocation *inv = (NSInvocation *) self;
+	[inv invoke];
+	if (result) [inv getReturnValue:&result];
+}
+
+- (void) performSelector: (SEL) selector withDelay: (NSTimeInterval) ti withReturnValueAndArguments: (void *) result, ...
+{
+	va_list arglist;
+	va_start(arglist, result);
+	NSInvocation *inv = [self invocationWithSelectorAndArguments:selector, arglist];
+	va_end(arglist);
 	
-	va_list selectors;
-	va_start(selectors, aSelector);
-	SEL selector = va_arg(selectors, SEL);
-	while (selector)
-	{
-		if ([self respondsToSelector:selector]) return selector;
-		selector = va_arg(selectors, SEL);
-	}
+	if (!inv) return;
+	[inv performSelector:@selector(delayedInvocationWithReturnValue:) withObject:(id) result afterDelay: ti];
+}
+
+- (id) objectByPerformingSelectorWithArguments: (SEL) selector, ...
+{
+	id result;
+	va_list arglist;
+	va_start(arglist, selector);
+	[self performSelector:selector withReturnValueAndArguments:&result, arglist];
+	va_end(arglist);
 	
-	return NULL;
+	return result;
+}
+
+- (id) objectByPerformingSelector:(SEL)selector withObject:(id) object1 withObject: (id) object2
+{
+	return [self objectByPerformingSelectorWithArguments:selector, object1, object2];
+}
+
+- (id) objectByPerformingSelector:(SEL)selector withObject:(id) object1
+{
+	return [self objectByPerformingSelectorWithArguments:selector, object1];
+}
+
+- (id) objectByPerformingSelector:(SEL)selector
+{
+	return [self objectByPerformingSelectorWithArguments:selector];
+}
+
+- (id) valueByPerformingSelectorWithArguments: (SEL) selector, ...
+{
+	va_list arglist;
+	va_start(arglist, selector);
+	NSInvocation *inv = [self invocationWithSelectorAndArguments:selector, arglist];
+	va_end(arglist);
+	
+	if (!inv) return nil;
+	
+	// Place results into value
+	void *bytes = malloc(64);
+	[inv getReturnValue:bytes];
+	const char *returnType = [[inv methodSignature] methodReturnType];
+	NSValue *returnValue = [NSValue valueWithBytes: bytes objCType: returnType];
+	free(bytes);
+	return returnValue;
+}
+
+- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1 withObject: (id) object2
+{
+	return [self valueByPerformingSelectorWithArguments:selector, object1, object2];
+}
+
+- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1
+{
+	return [self valueByPerformingSelectorWithArguments:selector, object1];
+}
+
+- (id) valueByPerformingSelector:(SEL)selector
+{
+	return [self valueByPerformingSelectorWithArguments:selector];
+}
+
+- (void) performSelector: (SEL) selector withCPointer: (void *) cPointer afterDelay: (NSTimeInterval) delay
+{
+	NSMethodSignature *ms = [self methodSignatureForSelector:selector];
+	NSInvocation *inv = [NSInvocation invocationWithMethodSignature:ms];
+	[inv setTarget:self];
+	[inv setSelector:selector];
+	[inv setArgument:cPointer atIndex:2];
+	[inv performSelector:@selector(invoke) withObject:nil afterDelay:delay];
+}
+
+- (void) performSelector: (SEL) selector withBool: (BOOL) boolValue afterDelay: (NSTimeInterval) delay
+{
+	[self performSelector:selector withCPointer:&boolValue afterDelay:delay];
+}
+
+- (void) performSelector: (SEL) selector withInt: (int) intValue afterDelay: (NSTimeInterval) delay
+{
+	[self performSelector:selector withCPointer:&intValue afterDelay:delay];
+}
+
+- (void) performSelector: (SEL) selector withFloat: (float) floatValue afterDelay: (NSTimeInterval) delay
+{
+	[self performSelector:selector withCPointer:&floatValue afterDelay:delay];
+}
+
+- (void) performSelector: (SEL) selector afterDelay: (NSTimeInterval) ti
+{
+	[self performSelector:selector withObject:nil afterDelay: ti];
 }
 @end
+
+

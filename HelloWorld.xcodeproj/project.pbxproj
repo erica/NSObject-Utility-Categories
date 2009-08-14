@@ -14,8 +14,6 @@
 		8E4156E90FA4EE0E0006D27C /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4156E70FA4EE0E0006D27C /* Default.png */; };
 		8E4156EA0FA4EE0E0006D27C /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4156E80FA4EE0E0006D27C /* icon.png */; };
 		8E7859420FCB3343006EA81F /* NSObject-Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7859410FCB3343006EA81F /* NSObject-Utility.m */; };
-		8EC2827C0FC1C08500754D3C /* NSObject-Value.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC2827B0FC1C08500754D3C /* NSObject-Value.m */; };
-		8EC282BA0FC1C71100754D3C /* NSObject-Delayed.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC282B90FC1C71100754D3C /* NSObject-Delayed.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,10 +28,6 @@
 		8E4156E80FA4EE0E0006D27C /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		8E7859400FCB3343006EA81F /* NSObject-Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject-Utility.h"; sourceTree = "<group>"; };
 		8E7859410FCB3343006EA81F /* NSObject-Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject-Utility.m"; sourceTree = "<group>"; };
-		8EC2827A0FC1C08500754D3C /* NSObject-Value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject-Value.h"; sourceTree = "<group>"; };
-		8EC2827B0FC1C08500754D3C /* NSObject-Value.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject-Value.m"; sourceTree = "<group>"; };
-		8EC282B80FC1C71100754D3C /* NSObject-Delayed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject-Delayed.h"; sourceTree = "<group>"; };
-		8EC282B90FC1C71100754D3C /* NSObject-Delayed.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject-Delayed.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,11 +74,7 @@
 			children = (
 				8E7859400FCB3343006EA81F /* NSObject-Utility.h */,
 				8E7859410FCB3343006EA81F /* NSObject-Utility.m */,
-				8EC2827A0FC1C08500754D3C /* NSObject-Value.h */,
-				8EC2827B0FC1C08500754D3C /* NSObject-Value.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
-				8EC282B80FC1C71100754D3C /* NSObject-Delayed.h */,
-				8EC282B90FC1C71100754D3C /* NSObject-Delayed.m */,
 				8E4235620FACA33900CB1256 /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -167,8 +157,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
-				8EC2827C0FC1C08500754D3C /* NSObject-Value.m in Sources */,
-				8EC282BA0FC1C71100754D3C /* NSObject-Delayed.m in Sources */,
 				8E7859420FCB3343006EA81F /* NSObject-Utility.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

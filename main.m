@@ -66,36 +66,34 @@
 	[ipc release];
 	
 	printf("Performing selectors\n");
+	
+	// Perform a delayed selector with a non-object argument
 	CGPoint aPoint = CGPointMake(1.0f, 3.0f);
 	[self performSelector:@selector(showCGPoint:) withCPointer:&aPoint afterDelay:1.0f];
 	
+	// Perform a selector with non-object return value
 	CGRect aFrame;
 	[self.view performSelector:@selector(frame) withReturnValueAndArguments:&aFrame, nil];
 	CFShow(NSStringFromCGRect(aFrame));
 
+	// Perform a selector with non-object arguments
 	[self.view performSelector:@selector(setFrame:) withReturnValueAndArguments:nil, CGRectMake(0.0f, 0.0f, 160.0f, 100.0f)];
 	[self.view performSelector:@selector(setCenter:) withReturnValueAndArguments:nil, CGPointMake(160.0f, 200.0f)];
 	
+	// Showcase return objects
 	NSNumber *foo;
 	[NSNumber performSelector:@selector(numberWithInt:) withReturnValueAndArguments:&foo, 23];
 	CFShow(foo);
-	
-	NSMutableString *s1 = [NSMutableString string];
-	[s1 performSelector:@selector(appendString:) withReturnValueAndArguments:nil, @"hello"];
-	CFShow(s1);
 	
 	UIBarButtonItem *bbi = [UIBarButtonItem alloc];
 	[bbi performSelector:@selector(initWithTitle:style:target:action:) withReturnValueAndArguments:&bbi, @"Hello!", 
 		UIBarButtonItemStylePlain, self, @selector(performAction)];
 	self.navigationItem.rightBarButtonItem = bbi;
 	
-	NSString *outstring = [@"foobar" objectByPerformingSelectorWithArguments:@selector(stringByAppendingString:), @"blort"];
-	CFShow(outstring);
-	
+	// Showcase boolean success
+	NSString *outstring;
 	if ([@"foobar" performSelector:@selector(stringByAppendingString:) withReturnValueAndArguments:&outstring, @"blort"])
 		CFShow(outstring);
-	
-	NSLog(@"%@", [string valueByPerformingSelector:@selector(length)]);
 }
 
 - (void) loadView

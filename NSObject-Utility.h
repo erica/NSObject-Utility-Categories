@@ -22,11 +22,6 @@
 - (id) objectByPerformingSelector:(SEL)selector withObject:(id) object1;
 - (id) objectByPerformingSelector:(SEL)selector;
 
-- (id) valueByPerformingSelectorWithArguments: (SEL) selector, ...;
-- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1 withObject: (id) object2;
-- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1;
-- (id) valueByPerformingSelector:(SEL)selector;
-
 - (void) performSelector: (SEL) selector withCPointer: (void *) cPointer afterDelay: (NSTimeInterval) delay;
 - (void) performSelector: (SEL) selector withInt: (int) intValue afterDelay: (NSTimeInterval) delay;
 - (void) performSelector: (SEL) selector withFloat: (float) floatValue afterDelay: (NSTimeInterval) delay;

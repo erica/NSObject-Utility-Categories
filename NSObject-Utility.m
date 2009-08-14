@@ -245,41 +245,6 @@
 	return [self objectByPerformingSelectorWithArguments:selector];
 }
 
-
-// Returning NSValues by performing selectors
-- (id) valueByPerformingSelectorWithArguments: (SEL) selector, ...
-{
-	va_list arglist;
-	va_start(arglist, selector);
-	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
-	va_end(arglist);
-	
-	if (!inv) return nil;
-	
-	// Place results into value
-	void *bytes = malloc(64);
-	[inv getReturnValue:bytes];
-	const char *returnType = [[inv methodSignature] methodReturnType];
-	NSValue *returnValue = [NSValue valueWithBytes: bytes objCType: returnType];
-	free(bytes);
-	return returnValue;
-}
-
-- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1 withObject: (id) object2
-{
-	return [self valueByPerformingSelectorWithArguments:selector, object1, object2];
-}
-
-- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1
-{
-	return [self valueByPerformingSelectorWithArguments:selector, object1];
-}
-
-- (id) valueByPerformingSelector:(SEL)selector
-{
-	return [self valueByPerformingSelectorWithArguments:selector];
-}
-
 // Delayed selectors
 - (void) performSelector: (SEL) selector withCPointer: (void *) cPointer afterDelay: (NSTimeInterval) delay
 {

@@ -70,7 +70,7 @@
 	while (argcount < totalArgs)
 	{
 		char *argtype = (char *)[ms getArgumentTypeAtIndex:argcount];
-		printf("[%s] %d of %d\n", [NSStringFromSelector(selector) UTF8String], argcount, totalArgs);
+		// printf("[%s] %d of %d\n", [NSStringFromSelector(selector) UTF8String], argcount, totalArgs); // debug
 		if (strcmp(argtype, @encode(id)) == 0)
 		{
 			id argument = va_arg(arguments, id);

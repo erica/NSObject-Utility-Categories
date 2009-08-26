@@ -207,7 +207,6 @@
 	[self performSelector:selector withReturnValue:&result andArguments:arglist];
 	va_end(arglist);
 	
-	printf("here:\n");
 	CFShow(result);
 	return result;
 }

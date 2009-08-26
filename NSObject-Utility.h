@@ -27,4 +27,8 @@
 - (void) performSelector: (SEL) selector withBool: (BOOL) boolValue afterDelay: (NSTimeInterval) delay;
 - (void) performSelector: (SEL) selector afterDelay: (NSTimeInterval) ti;
 - (void) performSelector: (SEL) selector withDelayAndArguments: (NSTimeInterval) ti,...;
+
+- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1 withObject: (id) object2;
+- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1;
+- (id) valueByPerformingSelector:(SEL)selector;
 @end

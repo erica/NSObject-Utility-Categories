@@ -277,6 +277,42 @@
 	if (!inv) return;
 	[inv performSelector:@selector(invoke) afterDelay:ti];
 }
+
+#pragma mark values
+- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1 withObject: (id) object2
+{
+	if (![self respondsToSelector:selector]) return nil;
+	
+	// Retrieve method signature and return type
+	NSMethodSignature *ms = [self methodSignatureForSelector:selector];
+	const char *returnType = [ms methodReturnType];
+	
+	// Create invocation using method signature and invoke it
+	NSInvocation *inv = [NSInvocation invocationWithMethodSignature:ms];
+	[inv setTarget:self];
+	[inv setSelector:selector];
+	if (object1) [inv setArgument:&object1 atIndex:2];
+	if (object2) [inv setArgument:&object2 atIndex:3];
+	[inv invoke];
+	
+	
+	// Place results into value
+	void *bytes = malloc(16);
+	[inv getReturnValue:bytes];
+	NSValue *returnValue = [NSValue valueWithBytes: bytes objCType: returnType];
+	free(bytes);
+	return returnValue;
+}
+
+- (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1
+{
+	return [self valueByPerformingSelector:selector withObject:object1 withObject:nil];
+}
+
+- (id) valueByPerformingSelector:(SEL)selector
+{
+	return [self valueByPerformingSelector:selector withObject:nil withObject:nil];
+}
 @end
 
 

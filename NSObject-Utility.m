@@ -129,7 +129,7 @@
 		}		
 		else
 		{
-			NSString *type = [NSString stringWithCString:argtype];
+			NSString *type = [NSString stringWithCString:argtype encoding:NSUTF8StringEncoding];
 			if ([type isEqualToString:@"{CGRect={CGPoint=ff}{CGSize=ff}}"])
 			{
 				CGRect arect = va_arg(arguments, CGRect);
@@ -273,7 +273,7 @@
 	{
 		char *s;
 		[inv getReturnValue:s];
-		return [NSString stringWithCString:s];
+		return [NSString stringWithCString:s encoding:NSUTF8StringEncoding];
 	}
 	
 	// return integer

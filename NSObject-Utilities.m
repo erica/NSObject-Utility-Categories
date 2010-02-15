@@ -462,6 +462,18 @@
 	return [set containsObject:ivarName];
 }
 
++ (BOOL) classExists: (NSString *) className
+{
+	return (NSClassFromString(className) != nil);
+}
+
++ (id) instanceOfClassNamed: (NSString *) className
+{
+	if (NSClassFromString(className) != nil)
+		return [[[NSClassFromString(className) alloc] init] autorelease];
+	else 
+		return nil;
+}
 
 // Return a C-string with a selector's return type
 // may extend this idea to return a class

@@ -6,6 +6,7 @@
 #import "NSObject-Utilities.h"
 
 @implementation NSObject (Utilities)
+
 // Return an array of an object's superclasses
 - (NSArray *) superclasses
 {
@@ -21,4 +22,5 @@
 	
 	return results;
 }
+
 @end

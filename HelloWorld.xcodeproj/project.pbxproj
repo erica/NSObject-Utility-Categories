@@ -13,9 +13,7 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		8E4156E90FA4EE0E0006D27C /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4156E70FA4EE0E0006D27C /* Default.png */; };
 		8E4156EA0FA4EE0E0006D27C /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E4156E80FA4EE0E0006D27C /* icon.png */; };
-		8E7859420FCB3343006EA81F /* NSObject-Selectors.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7859410FCB3343006EA81F /* NSObject-Selectors.m */; };
-		8E7D476C1128F79600B184C5 /* NSObject-Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D476B1128F79600B184C5 /* NSObject-Utilities.m */; };
-		8E7D47861128F8AE00B184C5 /* NSObject-Compatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D47851128F8AE00B184C5 /* NSObject-Compatibility.m */; };
+		8E7859420FCB3343006EA81F /* NSObject-Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7859410FCB3343006EA81F /* NSObject-Utilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,12 +26,8 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E4156E70FA4EE0E0006D27C /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		8E4156E80FA4EE0E0006D27C /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		8E7859400FCB3343006EA81F /* NSObject-Selectors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject-Selectors.h"; sourceTree = "<group>"; };
-		8E7859410FCB3343006EA81F /* NSObject-Selectors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject-Selectors.m"; sourceTree = "<group>"; };
-		8E7D476A1128F79600B184C5 /* NSObject-Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject-Utilities.h"; sourceTree = "<group>"; };
-		8E7D476B1128F79600B184C5 /* NSObject-Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject-Utilities.m"; sourceTree = "<group>"; };
-		8E7D47841128F8AE00B184C5 /* NSObject-Compatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject-Compatibility.h"; sourceTree = "<group>"; };
-		8E7D47851128F8AE00B184C5 /* NSObject-Compatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject-Compatibility.m"; sourceTree = "<group>"; };
+		8E7859400FCB3343006EA81F /* NSObject-Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject-Utilities.h"; sourceTree = "<group>"; };
+		8E7859410FCB3343006EA81F /* NSObject-Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject-Utilities.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,12 +72,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				8E7D476A1128F79600B184C5 /* NSObject-Utilities.h */,
-				8E7D476B1128F79600B184C5 /* NSObject-Utilities.m */,
-				8E7D47841128F8AE00B184C5 /* NSObject-Compatibility.h */,
-				8E7D47851128F8AE00B184C5 /* NSObject-Compatibility.m */,
-				8E7859400FCB3343006EA81F /* NSObject-Selectors.h */,
-				8E7859410FCB3343006EA81F /* NSObject-Selectors.m */,
+				8E7859400FCB3343006EA81F /* NSObject-Utilities.h */,
+				8E7859410FCB3343006EA81F /* NSObject-Utilities.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				8E4235620FACA33900CB1256 /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -167,9 +157,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
-				8E7859420FCB3343006EA81F /* NSObject-Selectors.m in Sources */,
-				8E7D476C1128F79600B184C5 /* NSObject-Utilities.m in Sources */,
-				8E7D47861128F8AE00B184C5 /* NSObject-Compatibility.m in Sources */,
+				8E7859420FCB3343006EA81F /* NSObject-Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

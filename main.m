@@ -5,6 +5,7 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "NSObject-Utilities.h"
 
 #define COOKBOOK_PURPLE_COLOR	[UIColor colorWithRed:0.20392f green:0.19607f blue:0.61176f alpha:1.0f]
 #define BARBUTTON(TITLE, SELECTOR) 	[[[UIBarButtonItem alloc] initWithTitle:TITLE style:UIBarButtonItemStylePlain target:self action:SELECTOR] autorelease]
@@ -28,10 +29,9 @@
 	va_list arglist;
 	if (!formatstring) return;
 	va_start(arglist, formatstring);
-	NSString *outstring = [[[NSString alloc] initWithFormat:formatstring arguments:arglist] autorelease];
+		NSString *outstring = [[[NSString alloc] initWithFormat:formatstring arguments:arglist] autorelease];
 	va_end(arglist);
-	[self.log appendString:outstring];
-	[self.log appendString:@"\n"];
+	[self.log appendString:[outstring stringByAppendingString:@"\n"]];
 	self.textView.text = self.log;
 }
 

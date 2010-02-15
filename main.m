@@ -9,7 +9,7 @@
 
 #define COOKBOOK_PURPLE_COLOR	[UIColor colorWithRed:0.20392f green:0.19607f blue:0.61176f alpha:1.0f]
 #define BARBUTTON(TITLE, SELECTOR) 	[[[UIBarButtonItem alloc] initWithTitle:TITLE style:UIBarButtonItemStylePlain target:self action:SELECTOR] autorelease]
-#define CFN(X) [self commasForNumber:X]
+#define BOOL_CHECK(TITLE, CHECK_ITEM)	printf("[%s]: %s\n", TITLE, (CHECK_ITEM) ? "Yes" : "No");
 
 @interface TestBedViewController : UIViewController
 {
@@ -44,6 +44,13 @@
 {
 	self.navigationController.navigationBar.tintColor = COOKBOOK_PURPLE_COLOR;
 	self.navigationItem.rightBarButtonItem = BARBUTTON(@"Action", @selector(action:));
+
+	BOOL_CHECK("Property view", [self hasProperty:@"view"]);
+	BOOL_CHECK("Property notaproperty", [self hasProperty:@"notaproperty"]);
+
+	BOOL_CHECK("Ivar isa", [self hasIvar:@"isa"]);
+	BOOL_CHECK("Ivar _view", [self hasIvar:@"_view"]);
+	BOOL_CHECK("Ivar notanivar", [self hasIvar:@"notanivar"]);
 }
 @end
 

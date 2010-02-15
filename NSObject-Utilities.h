@@ -31,14 +31,14 @@
 - (const char *) returnTypeForSelector:(SEL)selector;
 - (SEL) chooseSelector: (SEL) aSelector, ...;
 
-- (NSDictionary *) selectors;
-- (NSDictionary *) properties;
-- (NSDictionary *) ivars;
-- (NSDictionary *) protocols;
+// Access to object essentials -- handy for run-time checks
 @property (readonly) NSDictionary *selectors;
 @property (readonly) NSDictionary *properties;
 @property (readonly) NSDictionary *ivars;
 @property (readonly) NSDictionary *protocols;
+
+- (BOOL) hasProperty: (NSString *) propertyName;
+- (BOOL) hasIvar: (NSString *) ivarName;
 
 - (id) tryPerformSelector: (SEL) aSelector withObject: (id) object1 withObject: (id) object2;
 - (id) tryPerformSelector: (SEL) aSelector withObject: (id) object1;

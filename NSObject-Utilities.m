@@ -443,6 +443,26 @@
 	return dict;
 }
 
+// Runtime checks of properties, etc.
+- (BOOL) hasProperty: (NSString *) propertyName
+{
+	NSMutableSet *set = [NSMutableSet set];
+	NSDictionary *dict = self.properties;
+	for (NSArray *properties in [dict allValues])
+		[set addObjectsFromArray:properties];
+	return [set containsObject:propertyName];
+}
+
+- (BOOL) hasIvar: (NSString *) ivarName
+{
+	NSMutableSet *set = [NSMutableSet set];
+	NSDictionary *dict = self.ivars;
+	for (NSArray *ivars in [dict allValues])
+		[set addObjectsFromArray:ivars];
+	return [set containsObject:ivarName];
+}
+
+
 // Return a C-string with a selector's return type
 // may extend this idea to return a class
 - (const char *) returnTypeForSelector:(SEL)selector

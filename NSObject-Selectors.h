@@ -6,13 +6,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSObject (UtilityExtension)
-- (NSArray *) superclasses;
-
-- (const char *) returnTypeForSelector:(SEL)selector;
-
-- (SEL) chooseSelector: (SEL) aSelector, ...;
-
+@interface NSObject (Selectors)
 - (NSInvocation *) invocationWithSelectorAndArguments: (SEL) selector,...;
 - (BOOL) performSelector: (SEL) selector withReturnValueAndArguments: (void *) result, ...;
 
@@ -25,10 +19,13 @@
 - (void) performSelector: (SEL) selector withInt: (int) intValue afterDelay: (NSTimeInterval) delay;
 - (void) performSelector: (SEL) selector withFloat: (float) floatValue afterDelay: (NSTimeInterval) delay;
 - (void) performSelector: (SEL) selector withBool: (BOOL) boolValue afterDelay: (NSTimeInterval) delay;
-- (void) performSelector: (SEL) selector afterDelay: (NSTimeInterval) ti;
-- (void) performSelector: (SEL) selector withDelayAndArguments: (NSTimeInterval) ti,...;
+- (void) performSelector: (SEL) selector afterDelay: (NSTimeInterval) delay;
+- (void) performSelector: (SEL) selector withDelayAndArguments: (NSTimeInterval) delay,...;
 
 - (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1 withObject: (id) object2;
 - (id) valueByPerformingSelector:(SEL)selector withObject:(id) object1;
 - (id) valueByPerformingSelector:(SEL)selector;
+
+- (const char *) returnTypeForSelector:(SEL)selector;
+- (NSDictionary *) selectorList;
 @end

@@ -4,51 +4,11 @@
  BSD License, Use at your own risk
  */
 
-#import "NSObject-Utility.h"
+#import "NSObject-Selectors.h"
+#import "NSObject-Utilities.h"
+#import <objc/objc-runtime.h>
 
-@implementation NSObject (UtilityExtension)
-
-// Return an array of an object's superclasses
-- (NSArray *) superclasses
-{
-	Class cl = [self class];
-	NSMutableArray *results = [NSMutableArray arrayWithObject:cl];
-	
-	do 
-	{
-		cl = [cl superclass];
-		[results addObject:cl];
-	}
-	while (![cl isEqual:[NSObject class]]) ;
-	
-	return results;
-}
-
-// Return a C-string with a selector's return type
-// may extend this idea to return a class
-- (const char *) returnTypeForSelector:(SEL)selector
-{
-	NSMethodSignature *ms = [self methodSignatureForSelector:selector];
-	return [ms methodReturnType];
-}
-
-// Choose the first selector that an object can respond to
-// Thank Kevin Ballard for assist!
-- (SEL) chooseSelector: (SEL) aSelector, ...
-{
-	if ([self respondsToSelector:aSelector]) return aSelector;
-	
-	va_list selectors;
-	va_start(selectors, aSelector);
-	SEL selector = va_arg(selectors, SEL);
-	while (selector)
-	{
-		if ([self respondsToSelector:selector]) return selector;
-		selector = va_arg(selectors, SEL);
-	}
-	
-	return NULL;
-}
+@implementation NSObject (Selectors)
 
 // Return an invocation based on a selector and variadic arguments
 - (NSInvocation *) invocationWithSelector: (SEL) selector andArguments:(va_list) arguments
@@ -318,9 +278,9 @@
 	[self performSelector:selector withCPointer:&floatValue afterDelay:delay];
 }
 
-- (void) performSelector: (SEL) selector afterDelay: (NSTimeInterval) ti
+- (void) performSelector: (SEL) selector afterDelay: (NSTimeInterval) delay
 {
-	[self performSelector:selector withObject:nil afterDelay: ti];
+	[self performSelector:selector withObject:nil afterDelay: delay];
 }
 
 // private. only sent to an invocation
@@ -332,15 +292,15 @@
 }
 
 // Delayed selector
-- (void) performSelector: (SEL) selector withDelayAndArguments: (NSTimeInterval) ti,...
+- (void) performSelector: (SEL) selector withDelayAndArguments: (NSTimeInterval) delay,...
 {
 	va_list arglist;
-	va_start(arglist, ti);
+	va_start(arglist, delay);
 	NSInvocation *inv = [self invocationWithSelector:selector andArguments:arglist];
 	va_end(arglist);
 	
 	if (!inv) return;
-	[inv performSelector:@selector(invoke) afterDelay:ti];
+	[inv performSelector:@selector(invoke) afterDelay:delay];
 }
 
 #pragma mark values
@@ -377,6 +337,37 @@
 - (id) valueByPerformingSelector:(SEL)selector
 {
 	return [self valueByPerformingSelector:selector withObject:nil withObject:nil];
+}
+
+
+// Return an array of all an object's selectors
++ (NSArray *) getSelectorList
+{
+	NSMutableArray *selectors = [NSMutableArray array];
+	unsigned int num;
+	Method *methods = class_copyMethodList(self, &num);
+	for (int i = 0; i < num; i++)
+		[selectors addObject:NSStringFromSelector(method_getName(methods[i]))];
+	free(methods);
+	return selectors;
+}
+
+// Return a dictionary with class/selectors entries, all the way up to NSObject
+- (NSDictionary *) selectorList
+{
+	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+	[dict setObject:[[self class] getSelectorList] forKey:NSStringFromClass([self class])];
+	for (Class cl in [self superclasses])
+		[dict setObject:[cl getSelectorList] forKey:NSStringFromClass(cl)];
+	return dict;
+}
+
+// Return a C-string with a selector's return type
+// may extend this idea to return a class
+- (const char *) returnTypeForSelector:(SEL)selector
+{
+	NSMethodSignature *ms = [self methodSignatureForSelector:selector];
+	return [ms methodReturnType];
 }
 @end
 

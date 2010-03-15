@@ -1,4 +1,11 @@
 #pragma mark Useful Compatibility Tips
+
+#if TARGET_IPHONE_SIMULATOR
+// NSLog( @"Running in the simulator!" );
+#else
+// NSLog( @"Running on the device!" );
+#endif
+
 // Tip #1 Compile-time checks for OS
 /*
 #ifdef _USE_OS_3_OR_LATER
@@ -9,6 +16,14 @@
 #else 
 // 3.0 Code
 #endif
+
+also
+typedef enum {
+#if __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    UIUserInterfaceIdiomPhone,           // iPhone and iPod touch style UI
+    UIUserInterfaceIdiomPad,             // iPad style UI
+#endif
+} UIUserInterfaceIdiom;
 
  Built in sys versions include:
  #define __IPHONE_2_0 20000
@@ -41,4 +56,3 @@
 /*
  Add these to OTHER_CFLAGS in the Build tab: -save-temps
  */
-

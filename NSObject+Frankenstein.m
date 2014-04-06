@@ -16,6 +16,8 @@
 
 + (NSArray *) superclasses
 {
+    if ([self isEqual:[NSObject class]]) return @[self];
+    
     Class theClass = self;
     NSMutableArray *results = [NSMutableArray arrayWithObject:theClass];
     
@@ -592,6 +594,35 @@ void _PerformBlockAfterDelay(BasicBlockType block, NSTimeInterval delay)
 
     if ([typeNameString isEqualToString:@":"])
         return @"(SEL)";
+    
+    if ([typeNameString isEqualToString:@(@encode(CGPoint))])
+        return @"(CGPoint)";
+
+    if ([typeNameString isEqualToString:@(@encode(CGSize))])
+        return @"(CGSize)";
+
+    if ([typeNameString isEqualToString:@(@encode(CGRect))])
+        return @"(CGRect)";
+
+    if ([typeNameString isEqualToString:@(@encode(CGAffineTransform))])
+        return @"(CGAffineTransform)";
+
+    if ([typeNameString isEqualToString:@(@encode(UIEdgeInsets))])
+        return @"(UIEdgeInsets)";
+    
+    if ([typeNameString isEqualToString:@(@encode(NSRange))])
+        return @"(NSRange)";
+    
+    if ([typeNameString isEqualToString:@(@encode(CFStringRef))])
+        return @"(CFStringRef)";
+
+    if ([typeNameString isEqualToString:@(@encode(NSZone *))])
+        return @"(NSZone *)";
+
+    //    if ([typeNameString isEqualToString:@(@encode(CGAffineTransform))])
+//        return @"(CGAffineTransform)";
+    
+    
     /*
      [array type]     An array
      {name=type...}     A structure
@@ -665,6 +696,8 @@ void _PerformBlockAfterDelay(BasicBlockType block, NSTimeInterval delay)
         free(getterName);
     }
     if (hasProperty) [dump appendString:@"\n"];
+    
+    // Thanks Sam M for arg offset advice.
     
 	Method *clMethods = class_copyMethodList(objc_getMetaClass(self.description.UTF8String), &num);
 	for (int i = 0; i < num; i++)

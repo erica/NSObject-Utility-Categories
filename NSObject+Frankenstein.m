@@ -683,7 +683,7 @@ void _PerformBlockAfterDelay(BasicBlockType block, NSTimeInterval delay)
             {
                 NSString *arg = @"argument";
                 char argType[1024];
-                method_getArgumentType(clMethods[i], j, argType, 1024);
+                method_getArgumentType(clMethods[i], j + 2, argType, 1024);
                 NSString *typeStr = [self typeForString:argType];
                 [dump appendFormat:@"%@:%@%@ ", components[j], typeStr, arg];
             }
@@ -714,7 +714,7 @@ void _PerformBlockAfterDelay(BasicBlockType block, NSTimeInterval delay)
             {
                 NSString *arg = @"argument";
                 char argType[1024];
-                method_getArgumentType(methods[i], j, argType, 1024);
+                method_getArgumentType(methods[i], j + 2, argType, 1024);
                 NSString *typeStr = [self typeForString:argType];
                 [dump appendFormat:@"%@:%@%@ ", components[j], typeStr, arg];
             }
